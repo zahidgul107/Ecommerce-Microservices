@@ -15,6 +15,9 @@ spring:
     name: PRODUCT-SERVICE 
   config:
     import: configserver:http://localhost:8096
+#  cloud:
+#    compatibility-verifier:
+#      enabled: false
       
 #eureka:
 #  instance:
