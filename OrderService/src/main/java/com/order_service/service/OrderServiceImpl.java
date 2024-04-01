@@ -13,6 +13,7 @@ import com.order_service.external.client.ProductService;
 import com.order_service.external.client.request.PaymentRequest;
 import com.order_service.model.OrderRequest;
 import com.order_service.model.OrderResponse;
+import com.order_service.model.PaymentResponse;
 import com.order_service.model.ProductResponse;
 import com.order_service.repository.OrderRepository;
 
@@ -67,9 +68,18 @@ public class OrderServiceImpl implements OrderService {
 
 		ProductResponse productResponse = restTemplate.getForObject("http://PRODUCT-SERVICE/product/" + order.getProductId(),
 				ProductResponse.class);
+		
+		PaymentResponse paymentResponse = restTemplate.getForObject("http://PAYMENT-SERVICE/payment/" + order.getId(), PaymentResponse.class);
 
 		OrderResponse.ProductDetails productDetails = OrderResponse.ProductDetails.builder()
 				.productName(productResponse.getProductName()).build();
+		
+		OrderResponse.PaymentDetails paymentDetails = OrderResponse.PaymentDetails.builder()
+				.paymentId(paymentResponse.getPaymentId())
+				.paymentDate(paymentResponse.getPaymentDate())
+				.paymentMode(paymentResponse.getPaymentMode())
+				.Paymentstatus(paymentResponse.getStatus())
+				.build();
 		
 		OrderResponse orderRep = OrderResponse.builder().orderId(order.getId()).amount(order.getAmount())
 				.orderStatus(order.getOrderStatus()).orderDate(order.getOrderDate()).productDetails(productDetails).build();
