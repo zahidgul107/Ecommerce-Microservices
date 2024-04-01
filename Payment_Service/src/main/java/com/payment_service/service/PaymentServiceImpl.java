@@ -6,14 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.payment_service.entity.TransactionDetails;
+import com.payment_service.model.PaymentMode;
 import com.payment_service.model.PaymentRequest;
+import com.payment_service.model.PaymentResponse;
 import com.payment_service.repository.TransactionDetailsRepository;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
 	
 	@Autowired
-	TransactionDetailsRepository TrnsRepo;
+	TransactionDetailsRepository txnRepo;
 
 	@Override
 	public Long doPayment(PaymentRequest paymentRequest) {
@@ -26,8 +28,25 @@ public class PaymentServiceImpl implements PaymentService {
 				.referenceNumber(paymentRequest.getReferenceNumber())
 				.build();
 		
-		TrnsRepo.save(txnDetails);
+		txnRepo.save(txnDetails);
 		return txnDetails.getId();
+	}
+
+	@Override
+	public PaymentResponse getPaymentDetailsByOrderId(long orderId) {
+		
+		TransactionDetails txnDetails = txnRepo.findByOrderId(orderId);
+		
+		PaymentResponse paymentResponse = PaymentResponse.builder()
+				.amount(txnDetails.getAmount())
+				.orderId(txnDetails.getOrderId())
+				.paymentDate(txnDetails.getPaymentDate())
+				.paymentId(txnDetails.getId())
+				.paymentMode(PaymentMode.valueOf(txnDetails.getPaymentMode()))
+				.status(txnDetails.getPaymentStatus())
+				.build();
+		
+		return paymentResponse;
 	}
 
 }
