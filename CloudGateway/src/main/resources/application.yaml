@@ -10,16 +10,30 @@ spring:
     gateway:
       mvc:
         routes:
-        - id: ORDER-SERVICE
-          uri: lb://ORDER-SERVICE
-          predicates:
-            - Path=/order/**
-        - id: PAYMENT-SERVICE
-          uri: lb://PAYMENT-SERVICE
-          predicates:
-            - Path=/payment/**
-        - id: PRODUCT-SERVICE
-          uri: lb://PRODUCT-SERVICE
-          predicates:
-            - Path=/product/**
-        
+          - id: ORDER-SERVICE
+            uri: lb://ORDER-SERVICE
+            predicates:
+              - Path=/order/**
+            filters:
+              - name: CircuitBreaker
+                args:
+                  name: orderServiceCircuitBreaker
+                  fallbackuri: forward:/orderServiceFallBack
+          - id: PAYMENT-SERVICE
+            uri: lb://PAYMENT-SERVICE
+            predicates:
+              - Path=/payment/**
+            filters:
+              - name: CircuitBreaker
+                args:
+                  name: paymentServiceCircuitBreaker
+                  fallbackuri: forward:/paymentServiceFallBack
+          - id: PRODUCT-SERVICE
+            uri: lb://PRODUCT-SERVICE
+            predicates:
+              - Path=/product/**
+            filters:
+              - name: CircuitBreaker
+                args:
+                  name: productServiceCircuitBreaker
+                  fallbackuri: forward:/productServiceFallBack
