@@ -10,6 +10,7 @@ spring:
         git:
           uri: https://github.com/zahidgul107/Ecommerce-Microservices.git
           clone-on-start: true
+          default-label: master
     
 eureka:
   instance:
